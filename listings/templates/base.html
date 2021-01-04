@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Nunito&display=swap"
+    />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <nav
+      class="navbar navbar-expand-md navbar-dark bg-danger fixed-top py-1"
+      id="main-nav"
+    >
+      <div class="container">
+        <a href="{% url 'listings:product_list' %}" class="navbar-brand">
+          <h3 class="font-weight-bold">finesauces</h3>
+        </a>
+        <button class="navbar-toggler" data-toggle="collapse" 
+          data-target="#navbarCollapse">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav ml-auto">
+            {% if request.user.is_authenticated %}
+              <li class="nav-item">
+                <a href="{% url 'profile' %}" class="nav-link text-white">
+                  <i class="fas fa-user"></i> {{ request.user.email }}
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'logout' %}" class="nav-link text-white">
+                  <i class="fas fa-sign-out-alt"></i> Log out
+                </a>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a href="{% url 'login' %}" class="nav-link text-white">
+                  <i class="fas fa-sign-in-alt"></i> Log in
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'register' %}" class="nav-link text-white">
+                  <i class="fas fa-user-plus"></i> Register
+                </a>
+              </li>
+            {% endif %}
+            <li class="nav-item">
+              <div class="dropdown-custom">
+                <a href="{% url 'cart:cart_detail' %}" 
+                  class="nav-link text-white drop-btn">
+                  <i class="fas fa-shopping-cart"></i>
+                  $<span id="cart_price">{{ cart_total_price|floatformat:2 }}</span>
+                </a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container py-5">{% block content %} {% endblock content %}</div>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.min.js"
+      integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+      integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+      crossorigin="anonymous"
+    ></script>
+    <script src=" {% static 'js/scripts.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  </body>
+</html>

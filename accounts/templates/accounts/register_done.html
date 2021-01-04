@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Registration Complete{% endblock %}
+
+{% block content %}
+<div class="card shadow-custom border-0 col-lg-5 mx-auto mb-3 text-center">
+  <h3 class="py-2 font-weight-bold text-grey">
+    Welcome, {{ new_user.first_name }}
+  </h3>
+  <hr class="my-0">
+  <div class="py-2">
+    Your account was successfully created.
+    You can <a href="{% url 'login' %}">log in.</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="card shadow-custom border-0 col-lg-7 mx-auto mb-3">
+  <h3 class="py-2 font-weight-bold text-grey text-center">
+    Delivery information:
+  </h3>
+
+  <script src="https://js.stripe.com/v3/"></script> 
+
+  <form method="post" id="payment-form">  
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-6">
+        <div class="input-field">
+          <label class="text-muted">First name</label>
+          {{ order_form.first_name }}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-field">
+          <label class="text-muted">Last name</label>
+          {{ order_form.last_name }}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-field">
+          <label class="text-muted">Email</label>
+          {{ order_form.email }}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-field">
+          <label class="text-muted">Phone number</label>
+          {{ order_form.telephone }}
+        </div>
+      </div>
+    </div>
+    <hr class="mt-0">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="input-field">
+          <label class="text-muted">Address</label>
+          {{ order_form.address }}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-field">
+          <label class="text-muted">Postal code</label>
+          {{ order_form.postal_code }}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-field mb-0">
+          <label class="text-muted">City</label>
+          {{ order_form.city }}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-field mb-0">
+          <label class="text-muted">Country</label>
+          {{ order_form.country }}
+        </div>
+      </div>
+    </div>
+    {% if not request.user.is_authenticated %}
+      <div class="mt-2 text-center">
+        Already registered? 
+        <a href="{% url 'login' %}"
+          class="text-decoration-none">
+          Log in
+        </a>   
+      </div>  
+    {% endif %}
+    <hr>
+    <h4 class="py-2 font-weight-bold text-grey">
+      Transport:
+    </h4>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="radiobtn">
+          <input type="radio" id="id_transport_0" name="transport" 
+            value="Courier delivery" amount="{{ transport_cost }}"
+            checked onclick="setTotalCost()" />
+          <label for="id_transport_0">Courier delivery
+            <span class="text-danger float-right pr-3 font-weight-bold">
+              ${{ transport_cost }}</span>
+          </label>
+        </div>
+        <div class="radiobtn">
+          <input type="radio" id="id_transport_1" name="transport" 
+            value="Recipient pickup" amount="free"
+            onclick="setTotalCost()" />
+          <label for="id_transport_1">Recipient pickup
+            <span class="text-green float-right pr-3 font-weight-bold">
+              free
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <h4 class="py-2 font-weight-bold text-grey">Payment:</h4>
+    <div class="form-row">
+      <div id="card-element">
+      <!-- A Stripe Element will be inserted here. -->
+      </div>
+
+      <!-- Used to display form errors. -->
+      <div id="card-errors" role="alert"></div>
+    </div>
+    <hr class="mb-4">
+    <div class="input-field">
+      <label class="text-muted">Note</label>
+      {{ order_form.note }}
+    </div>
+    <h4 class="py-2 font-weight-bold text-grey">Price total:
+      <span id="order-total" class="text-danger float-right">
+      </span>
+    </h4>
+  </div>
+  <div class="col-lg-7 mx-auto mb-3">
+    <div class="row justify-content-end">
+      <div class="col-lg-8 px-0">
+        <div class="btn-group d-flex">
+          <a href="{% url 'listings:product_list' %}" 
+            class="btn btn-warning shadow-custom col">
+            Back to shop
+          </a>
+          <button type="submit" class="btn btn-danger shadow-custom col">
+            Create order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<script>
+  // Create a Stripe client.
+  var stripe = Stripe('pk_test_51HY6jqApSgCDuEQrpaGvLSOdyhkyutUCgmtLUg84B9x2suaFobSYA8TERgSvFkJxJbdJKMxBrdhUzbjBqUnePmWj00LLLV4AAq');
+
+  // Create an instance of Elements.
+  var elements = stripe.elements();
+
+  // Custom styling can be passed to options when creating an Element.
+  // (Note that this demo uses a wider set of styles than the guide below.)
+  var style = {
+    base: {
+      color: '#32325d',
+      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+      fontSmoothing: 'antialiased',
+      fontSize: '16px',
+      '::placeholder': {
+        color: '#aab7c4'
+      }
+    },
+    invalid: {
+      color: '#fa755a',
+      iconColor: '#fa755a'
+    }
+  };
+
+  // Create an instance of the card Element.
+  var card = elements.create('card', { style: style });
+
+  // Add an instance of the card Element into the `card-element` <div>.
+  card.mount('#card-element');
+  // Handle real-time validation errors from the card Element.
+  card.on('change', function (event) {
+    var displayError = document.getElementById('card-errors');
+    if (event.error) {
+      displayError.textContent = event.error.message;
+    } else {
+      displayError.textContent = '';
+    }
+  });
+
+  // Handle form submission.
+  var form = document.getElementById('payment-form');
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    stripe.createToken(card).then(function (result) {
+      if (result.error) {
+        // Inform the user if there was an error.
+        var errorElement = document.getElementById('card-errors');
+        errorElement.textContent = result.error.message;
+      } else {
+        // Send the token to your server.
+        stripeTokenHandler(result.token);
+      }
+    });
+  });
+
+  // Submit the form with the token ID.
+  function stripeTokenHandler(token) {
+    // Insert the token ID into the form so it gets submitted to the server
+    var form = document.getElementById('payment-form');
+    var hiddenInput = document.createElement('input');
+    hiddenInput.setAttribute('type', 'hidden');
+    hiddenInput.setAttribute('name', 'stripeToken');
+    hiddenInput.setAttribute('value', token.id);
+    form.appendChild(hiddenInput);
+
+    // Submit the form
+    form.submit();
+  }
+</script>
+
+{% endblock content %}

@@ -1,0 +1,74 @@
+<html>
+
+<body>
+  <div>
+    <span class="h3 font-weight-bold muted">
+      finesauces.store
+    </span>
+    <span class="float-right font-weight-bold">
+      Order #{{ order.id }}
+    </span>
+  </div>
+  <div class="mt-3">
+    Created: {{ order.created|date }}
+  </div>
+
+  <hr>
+
+  <div id="container">
+    <div class="item mt-2">
+      <div class="font-weight-bold">
+        Manufacturer
+      </div>
+
+      E-mail: eshop@finesauces.store<br>
+      Internet: finesauces.store<br>
+      Telephone: 404-555-0210<br>
+    </div>
+
+    <div class="item mt-2">
+      <div class="font-weight-bold">
+        Customer
+      </div>
+      {{ order.first_name }} {{ order.last_name }}<br>
+      {{ order.address }}<br>
+      {{ order.postal_code }}, {{ order.city }}
+    </div>
+  </div>
+
+  <hr>
+
+  <h3>Your order:</h3>
+  <table class="table mt-3">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th class="text-right">Price</th>
+        <th class="text-right">Quantity</th>
+        <th class="text-right">Price total</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in order.items.all %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td class="num text-right">${{ item.price }}</td>
+        <td class="num text-right">{{ item.quantity }}x</td>
+        <td class="num text-right">${{ item.get_cost }}</td>
+      </tr>
+    {% endfor %}
+      <tr>
+        <td colspan=3>Transport - {{ order.transport }}</td>
+        <td class="num text-right">${{ order.transport_cost }}</td>
+      </tr>
+      <tr class="total font-weight-bold">
+        <td colspan="3">Price total:</td>
+        <td class="num text-right">
+          ${{ order.get_total_cost|floatformat:2 }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>

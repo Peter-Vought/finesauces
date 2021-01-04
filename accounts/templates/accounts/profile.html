@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Account{% endblock %}
+
+{% block content %}
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+    <div class="shadow-custom messages alert alert-danger text-center
+      col-lg-7 mx-auto">
+    {% else %}
+    <div class="shadow-custom messages alert alert-success text-center
+      col-lg-7 mx-auto">
+    {% endif %}
+      {{ message }}
+      <a href="" class="close">x</a>
+    </div>
+  {% endfor %}
+{% endif %}
+  <div class="card shadow-custom border-0 col-lg-7 mx-auto mb-3">
+    <h2 class="font-weight-bold text-grey mt-2">Profile</h2>
+    <form action="" method="POST">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="input-field">
+            {{ user_form.first_name }}
+            <label for="first_name">First name</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="input-field">
+            {{ user_form.last_name }}
+            <label for="last_name">Last name</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="input-field">
+            {{ user_form.email }}
+            <label for="email">Email</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="input-field">
+            {{ profile_form.phone_number }}
+            <label for="phone_number">Phone number</label>
+          </div>
+        </div>
+      </div>
+      <hr class="mt-0">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="input-field">
+            {{ profile_form.address }}
+            <label for="address">Address</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="input-field">
+            {{ profile_form.postal_code }}
+            <label for="postal_code">Postal code</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="input-field">
+            {{ profile_form.city }}
+            <label for="city">City</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="input-field">
+            {{ profile_form.country }}
+            <label for="country">Country</label>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <button type="submit" class="btn col" data-toggle="tooltip" 
+          data-placement="top"
+          title="Fill in new details and click 'Update profile'">
+          Update profile</button>
+        <a class="btn col" href="{% url 'password_change' %}">
+          Change password
+        </a>
+      </div>
+      <hr>
+      <h3 class="mb-3">Your orders:</h3>
+      <table class="table">
+        {% for order in request.user.orders.all %}
+          <tr>
+            <td>
+              <a href="{{ order.get_absolute_url }}" class="text-decoration-none">
+                {{ order.id }}
+              </a>
+            </td>
+            <td>{{ order.created|date }}</td>
+            <td class="text-green">
+              ${{ order.get_total_cost|floatformat:2 }}
+            </td>
+            <td>
+              <a href="{% url 'orders:customer_invoice_pdf' order.id %}" class="text-decoration-none" target="_blank">
+                <i class="far fa-file-pdf text-danger"></i>
+                Invoice {{ order.id }}
+              </a>
+            </td>
+            <td>{{ order.status }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            No orders yet
+          </tr>
+        {% endfor %}
+      </table>
+    </form>
+  </div>
+</div>
+{% endblock %}

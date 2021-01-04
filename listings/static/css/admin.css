@@ -1,0 +1,56 @@
+:root {
+    --primary-white: #fff;
+    --primary-orange: #ffc107;
+    --primary-red: #dc3545;
+    --primary-grey: #444;
+}
+
+#header {
+    background: var(--primary-red);
+    box-shadow: 0px 2px 5px #444;
+    z-index: 2;
+}
+
+#header #branding #head {
+    font-weight: 700 !important;
+    font-family: 'Nunito', sans-serif;
+    color: var(--primary-white) !important;
+}
+
+#user-tools {
+    font-weight: bold;
+}
+
+.module h2, .module caption, .inline-group h2 {
+    background: var(--primary-orange);
+}
+
+.module a {
+    color: var(--primary-grey);
+}
+
+div.breadcrumbs {
+    background: var(--primary-orange);
+    color:var(--primary-grey);
+    font-weight: bold;
+}
+
+.paginator input[type=submit]{
+    background-color: var(--primary-red);
+}
+
+.submit-row input.default {
+    background-color: var(--primary-red);
+}
+
+.submit-row input:hover.default {
+    background-color: #c23442;
+}
+
+.submit-row input, a.button {
+    background-color: var(--primary-orange);
+}
+
+.submit-row input:hover, a.button:hover {
+    background-color: #ffac07;
+};
